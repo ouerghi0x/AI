@@ -1,0 +1,45 @@
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=MyCassandraCluster
+      - CASSANDRA_DC=DC1
+      - CASSANDRA_RACK=Rack1
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+      - ./cdc:/var/lib/cassandra/cdc_raw
+    networks:
+      - shared-net
+    restart: always
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  app:
+    container_name: my-langchain-app
+    build: .
+    depends_on:
+      cassandra:
+        condition: service_healthy  # ✅ only start after Cassandra is healthy
+    ports:
+      - "8001:8001"
+
+    environment:
+      ENVIRONMENT: dev
+      CASSANDRA_HOST: cassandra
+      CASSANDRA_PORT: 9042
+    networks:
+      - shared-net
+    restart: unless-stopped
+
+volumes:
+  cassandra-data:
+
+networks:
+  shared-net:
+    driver: bridge
