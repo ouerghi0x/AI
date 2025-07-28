@@ -21,7 +21,7 @@ services:
       retries: 10
 
   app:
-    container_name: my-langchain-app
+    container_name: my-langchain-agent
     build: .
     depends_on:
       cassandra:

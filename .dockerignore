@@ -1,6 +1,8 @@
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
+*.pkl
+*.pt
 *.log
+.env
+*.ipynb
 .venv

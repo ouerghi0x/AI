@@ -1,8 +1,6 @@
-from langchain.retrievers import ContextualCompressionRetriever
 import logging
 import time
 from collections import OrderedDict
-from langchain_community.document_compressors import FlashrankRerank
 from langchain.agents import Tool
 
 from langchain_google_genai import (
@@ -35,7 +33,6 @@ set_llm_cache(SQLiteCache(database_path="langchain.db"))
 
 
 from services.cassandra_service import CassandraManager
-from flashrank import Ranker 
 from langchain_core.prompts import PromptTemplate
 from env_loader import load_environment
 
@@ -57,10 +54,7 @@ class AgentInterface:
         self.UPLOAD_DIR = Path(name_dir) 
 
         # Create a single Ranker instance properly
-        ranker = Ranker(model_name="ms-marco-MiniLM-L-12-v2")
-        self.compressor = FlashrankRerank(
-            client=ranker
-        )
+
         self.cassandraInterface=cassandra_intra
 
 
@@ -156,13 +150,8 @@ class AgentInterface:
         
         ensemble_retriever = EnsembleRetriever(retrievers=[ensemble_retriever_new, multi_retriever],
                                         weights=[0.4, 0.6])
-        ensemble_retriever = EnsembleRetriever(retrievers=[ensemble_retriever, ensemble_retriever_new],
-                                        weights=[0.4, 0.6])
-        compression_retriever = ContextualCompressionRetriever(
-        base_compressor=self.compressor,
-        base_retriever=ensemble_retriever
-        )
-        return compression_retriever
+
+        return ensemble_retriever
 
 
     def get_cached_answer(self, question):
