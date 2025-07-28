@@ -1,16 +1,15 @@
 import os
 
 from langchain.retrievers import ParentDocumentRetriever
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Cassandra
 from langchain_core.stores import InMemoryStore
 from langchain_experimental.text_splitter import SemanticChunker
 from langchain_text_splitters import TokenTextSplitter
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 from env_loader import load_environment
 from services.cassandra_service import CassandraManager
 from services.load_data import DataLoader
-os.environ["TRANSFORMERS_CACHE"] = "/app/hf_cache"
 
 load_environment()
 class ParentRetriever:
@@ -19,20 +18,18 @@ class ParentRetriever:
         self.parent_store = InMemoryStore()
         self.astra_db_store = self.setup_vector_store()
         self.semantic_chunker = SemanticChunker(
-            HuggingFaceEmbeddings(
-                model_name="all-MiniLM-L6-v2",
-                model_kwargs={'device': 'cpu'},
-                encode_kwargs={'normalize_embeddings': True}
+           GoogleGenerativeAIEmbeddings(
+                model="models/embedding-001",  # Gecko model
+                google_api_key=os.getenv("LANGSMITH_API_KEY")
             )
         )
         self.parent_retriever = self.configure_parent_child_splitters()
 
     def setup_vector_store(self) -> Cassandra | None:
         try:
-            hf_embedding = HuggingFaceEmbeddings(
-                model_name="all-MiniLM-L6-v2",
-                model_kwargs={'device': 'cpu'},
-                encode_kwargs={'normalize_embeddings': True}
+            hf_embedding = GoogleGenerativeAIEmbeddings(
+                model="models/embedding-001",  # Gecko model
+                google_api_key=os.getenv("LANGSMITH_API_KEY")
             )
             astra_db_store: Cassandra = Cassandra(
                 embedding=hf_embedding,

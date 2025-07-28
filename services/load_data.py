@@ -4,7 +4,6 @@ import uuid
 import os
 import threading
 from langchain_community.document_loaders import PDFPlumberLoader  
-import pandas as pd 
 class DataLoader:
     def __init__(self, upload_dir):
         self.UPLOAD_DIR = upload_dir
