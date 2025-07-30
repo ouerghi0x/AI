@@ -8,17 +8,17 @@ class DataLoader:
     def __init__(self, upload_dir):
         self.UPLOAD_DIR = upload_dir
         os.makedirs(self.UPLOAD_DIR, exist_ok=True)
-
+        self.keyspace_cassandra=os.getenv("store")
     def load_documents(self,semantic_spliter,session):
         docs = []
         all_files = os.listdir(self.UPLOAD_DIR)
         threads = []
         for file in all_files:
-            if(session.execute("SELECT * FROM shop.documents WHERE FILE_name = %s ALLOW FILTERING", (file,)).one() is not None):
+            if(session.execute(f"SELECT * FROM {self.keyspace_cassandra}.documents WHERE FILE_name = %s ALLOW FILTERING", (file,)).one() is not None):
                 continue
             else:
                 document_id = (uuid.uuid4())
-                session.execute("INSERT INTO shop.documents (FILE_name,document_id) VALUES (%s,%s)", (file,document_id))
+                session.execute(f"INSERT INTO {self.keyspace_cassandra}.documents (FILE_name,document_id) VALUES (%s,%s)", (file,document_id))
                 #session.commit()
                 self.choosing_logic(docs, threads, file)
 

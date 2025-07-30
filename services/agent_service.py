@@ -74,7 +74,8 @@ class AgentInterface:
         self.compression_retriever=None
 
 
-        
+
+
 
         self.combine_documents_chain=None
         self.memory = ConversationSummaryMemory(llm=self.llm,memory_key="chat_history",return_messages=True)
