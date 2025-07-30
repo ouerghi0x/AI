@@ -209,7 +209,7 @@ class AgentInterface:
         self.logger.info(f"Received question: {question}")
         docs=os.listdir(self.UPLOAD_DIR)
         question_enhanced = question + f" The following files may help answer the question accurately: {docs}. If you find a match, use the Deep Answering Tool."
-
+        question_enhanced +=  "\nAnswer in the same language as the question."
 
         try:
                 
