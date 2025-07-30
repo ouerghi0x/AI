@@ -24,7 +24,7 @@ class CassandraManager:
         
         
         
-        self.session =  Cluster(['cassandra'],port=port).connect()
+        self.session =  Cluster([self.CASSANDRA_USERNAME],port=port).connect()
         cassio.init(session=self.session, keyspace=self.KEYSPACE)
             
         create_key_space = f"""
