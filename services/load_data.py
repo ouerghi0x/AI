@@ -8,7 +8,7 @@ class DataLoader:
     def __init__(self, upload_dir):
         self.UPLOAD_DIR = upload_dir
         os.makedirs(self.UPLOAD_DIR, exist_ok=True)
-        self.keyspace_cassandra=os.getenv("store")
+        self.keyspace_cassandra=os.getenv("KEYSPACE")
     def load_documents(self,semantic_spliter,session):
         docs = []
         all_files = os.listdir(self.UPLOAD_DIR)
