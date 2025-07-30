@@ -167,7 +167,7 @@ class AgentInterface:
     def simple_chain(self):
        
         ADDITIONAL_INSTRUCTIONS = os.getenv("ADDITIONAL_INSTRUCTIONS", "")
-        self.prompt =ADDITIONAL_INSTRUCTIONS + """
+        self.prompt = ADDITIONAL_INSTRUCTIONS + """
             **Context:**  
             {context}  
 
@@ -176,7 +176,11 @@ class AgentInterface:
 
             **Question:**  
             {question}  
-             """
+            
+            Please answer the user in the same language as the question.
+            [Answer] 
+            """
+
 
 
         chain = (
