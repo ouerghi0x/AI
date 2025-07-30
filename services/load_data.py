@@ -51,7 +51,7 @@ class DataLoader:
         file_path = os.path.join(self.UPLOAD_DIR, file)
         if not file.endswith(".csv"):
             return
-
+        import  pandas as pd
         df = pd.read_csv(file_path)
         df['meta'] = df.apply(lambda row: {"source": file_path}, axis=1)
         records = df.to_dict('records')

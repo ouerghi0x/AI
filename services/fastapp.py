@@ -21,7 +21,7 @@ class FastApp:
         self.agent = AgentInterface(ret)
         self.origins = [
             os.getenv('ANGULAR_URL'),
-            'http://51.210.107.84:4041',
+            'http://51.210.107.84:7080',
             'http://localhost:4041'
         ]
         self.app.add_middleware(
