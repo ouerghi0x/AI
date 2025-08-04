@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fdf32d8c-56de-45c8-8cfb-6a8cb395f62e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.dockerignore" beforeDir="false" afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.dev" beforeDir="false" afterPath="$PROJECT_DIR$/.env.dev" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -141,7 +142,7 @@
       <updated>1754313951002</updated>
       <workItem from="1754313951952" duration="4856000" />
       <workItem from="1754334334797" duration="10946000" />
-      <workItem from="1754346196117" duration="4375000" />
+      <workItem from="1754346196117" duration="4470000" />
     </task>
     <servers />
   </component>
