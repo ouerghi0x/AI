@@ -37,6 +37,10 @@ class DataLoader:
         elif file.endswith(".csv"):
             thread = threading.Thread(target=self.load_csv_to_documents, args=(docs, file))
             threads.append(thread)
+        elif file.endswith(".txt"):
+            thread = threading.Thread(target=self.process_txt_file, args=(docs, file))
+            threads.append(thread)
+
 
     
 
@@ -46,13 +50,21 @@ class DataLoader:
         document = loader.load()
         if document is not None:
             docs.extend(document)
+    def process_txt_file(self, docs, file):
+        from langchain_community.document_loaders import TextLoader
+
+        full_path = os.path.join(self.UPLOAD_DIR, file)
+        loader = TextLoader(full_path, encoding="utf-8")
+        document = loader.load()
+        if document is not None:
+            docs.extend(document)
 
     def load_csv_to_documents(self, docs, file):
         file_path = os.path.join(self.UPLOAD_DIR, file)
         if not file.endswith(".csv"):
             return
         import  pandas as pd
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(str(file_path))
         df['meta'] = df.apply(lambda row: {"source": file_path}, axis=1)
         records = df.to_dict('records')
         columns = df.columns

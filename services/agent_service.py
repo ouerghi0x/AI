@@ -1,7 +1,6 @@
 import logging
 import time
 from collections import OrderedDict
-from langchain.agents import Tool
 
 from langchain_google_genai import (
     ChatGoogleGenerativeAI,
@@ -23,7 +22,6 @@ from langchain.retrievers import  EnsembleRetriever
 from langchain_community.cache import SQLiteCache
 
 from services.ret_insert_docs import ParentRetriever
-from services.sql_agent_service import Sql_agent
 
 set_llm_cache(SQLiteCache(database_path="langchain.db"))
 
@@ -82,44 +80,12 @@ class AgentInterface:
 
         self.chain=None
         self.rag_tool =None
-        self.tools=[
-        ]
-        self.register_sql_tool("BD_CARS", "VPS_DB_URI_BD_CARS", "VPS_DB_DESC_BD_CARS", "Cars")
-        self.register_sql_tool("test_medical", "VPS_DB_URI_test_medical", "VPS_DB_DESC_test_medical", "Medical")
-
-    def register_sql_tool(self,db_key, uri_env, desc_env, name):
-        agent = Sql_agent(self.llm, os.getenv(uri_env))
-        tool = Tool(
-            name=f"SQL Agent - {name} for  {db_key}",
-            func=agent.run,
-            description=os.getenv(desc_env, f"Tool to access the {name} database"),
-        )
-        self.tools.append(tool)
 
 
-    def complete_agent(self):
-        from langchain.agents import initialize_agent
-        from langchain.agents.agent_types import AgentType
-        
-        self.rag_tool=Tool(
-                name="Deep Answering Agent",
-                func=self.chain.invoke,
-                description = (
-                "This tool is backed by a full Retrieval-Augmented Generation (RAG) agent, optimized for deep and context-aware information retrieval. "
-                "It is invoked by the main agent when a query requires in-depth reasoning or highly specific knowledge that cannot be handled by simple "
-                "complex and research-intensive tasks."
-            )
-            )
-        self.tools.append(
-            self.rag_tool
-        )
-        self.final_agent=initialize_agent(
-                 self.tools,
-                llm=self.llm,
-                agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-                verbose=True
-            )   
-    
+
+
+
+
     def setup_logging(self):
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
@@ -178,8 +144,11 @@ class AgentInterface:
             **Question:**  
             {question}  
             
-            Please answer the user in the same language as the question.
-            [Answer] 
+            Please answer the user in the same language as the question. 
+            Understand the user’s question fully. 
+            If more information is needed to provide a good answer or recommendation, 
+            ask the user for clarification or additional details. Provide clear, direct, and natural text responses without hashtags, asterisks, or special formatting. Act as a friendly and helpful shopping assistant guiding the user to find the best product. After answering, ask relevant follow-up questions to learn more about their preferences, budget, salary, or lifestyle. 
+            Keep the conversation flowing naturally and engagingly.
             """
 
 
@@ -198,9 +167,6 @@ class AgentInterface:
         )
 
         return chain
-    
-
-
 
     
     def answer_question(self,question:str
@@ -213,12 +179,7 @@ class AgentInterface:
 
         try:
                 
-            final_answer = self.final_agent.run(question_enhanced) 
-            if (question,final_answer) not in self.memory_llm:
-                self.memory_llm.append((question, final_answer))
-                
-                
-               
+            final_answer = self.chain.invoke(question_enhanced)
         except Exception as e:
             self.logger.error(f"Error while answering question: {e}")
             return 

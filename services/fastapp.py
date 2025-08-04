@@ -58,7 +58,7 @@ class FastApp:
         agent = self.agent
         agent.compression_retriever=await agent.setup_ensemble_retrievers()
         agent.chain = agent.simple_chain()
-        agent.complete_agent()
+        #agent.complete_agent()
         return agent
 
     async def send_message(self, request: Request, question:QuestionRequest):

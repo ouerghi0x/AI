@@ -1,7 +1,7 @@
 services:
-  cassandra:
+  my-cassandra: # Renamed the service to 'my-cassandra'
     image: cassandra:latest
-    container_name: cassandra
+    container_name: aziz-ai-cassandra # Updated the container name as requested
     ports:
       - "9042:9042"
     environment:
@@ -9,7 +9,7 @@ services:
       - CASSANDRA_DC=DC1
       - CASSANDRA_RACK=Rack1
     volumes:
-      - cassandra-data:/var/lib/cassandra
+      - my-cassandra-data:/var/lib/cassandra # Updated the volume name
       - ./cdc:/var/lib/cassandra/cdc_raw
     networks:
       - shared-net
@@ -21,24 +21,29 @@ services:
       retries: 10
 
   app:
-    container_name: my-langchain-agent
+    container_name: IA-agent
     build: .
     depends_on:
-      cassandra:
-        condition: service_healthy  # ✅ only start after Cassandra is healthy
+      my-cassandra: # Updated dependency to the new service name
+        condition: service_healthy
     ports:
       - "8001:8001"
 
+    labels:
+      - "maintainer=aziz" # Added a label with the name "aziz"
+
     environment:
       ENVIRONMENT: dev
-      CASSANDRA_HOST: cassandra
+      CASSANDRA_HOST: my-cassandra # Updated the CASSANDRA_HOST to the new service name
       CASSANDRA_PORT: 9042
+      KEYSPACE: store
+
     networks:
       - shared-net
     restart: unless-stopped
 
 volumes:
-  cassandra-data:
+  my-cassandra-data: # Updated the volume name
 
 networks:
   shared-net:

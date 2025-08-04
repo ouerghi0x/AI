@@ -58,9 +58,8 @@ class ParentRetriever:
     async def add_documents_to_parent_retriever(self):
         load_data = DataLoader(os.getenv('UPLOAD_DIR'))
         documents, docs_ids = load_data.load_documents(self.semantic_chunker, self.cassandraInterface.session)
-
         self.parent_retriever.docstore.mset(list(zip(docs_ids, documents)))
         for i, doc in enumerate(documents):
             doc.metadata["doc_id"] = docs_ids[i]
-
+        self.astra_db_store.clear()
         await self.parent_retriever.vectorstore.aadd_documents(documents=documents)
