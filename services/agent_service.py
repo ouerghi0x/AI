@@ -135,13 +135,13 @@ class AgentInterface:
        
         ADDITIONAL_INSTRUCTIONS = os.getenv("ADDITIONAL_INSTRUCTIONS", "")
         self.prompt = ADDITIONAL_INSTRUCTIONS + """
-            **Context:**  
+            Context: 
             {context}  
 
-            **Chat History:**  
+            Chat History:
             {chat_history}  
 
-            **Question:**  
+            Question:
             {question}  
             
             Please answer the user in the same language as the question. 

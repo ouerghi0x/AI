@@ -3,7 +3,7 @@ services:
     image: cassandra:latest
     container_name: aziz-ai-cassandra # Updated the container name as requested
     ports:
-      - "9042:9042"
+      - "9066:9066"
     environment:
       - CASSANDRA_CLUSTER_NAME=MyCassandraCluster
       - CASSANDRA_DC=DC1
@@ -27,7 +27,7 @@ services:
       my-cassandra: # Updated dependency to the new service name
         condition: service_healthy
     ports:
-      - "8001:8001"
+      - "8044:8044"
 
     labels:
       - "maintainer=aziz" # Added a label with the name "aziz"
@@ -47,4 +47,4 @@ volumes:
 
 networks:
   shared-net:
-    driver: bridge
+    driver: bridge # fix this and dont change port of cassandra i put
